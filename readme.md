@@ -1,0 +1,1 @@
+A simple Wordle cracker that works by filtering words by possible characters
