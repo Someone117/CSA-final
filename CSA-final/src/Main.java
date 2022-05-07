@@ -1,14 +1,12 @@
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
     
     //Creating a scanner object to take in words from users
-    private static Scanner scan = new Scanner(System.in);
+    private static final Scanner scan = new Scanner(System.in);
     
-    //creaing an ArrayList and printing the words out on display from the possible words file
     public static void main(String[] args) {
         try {
             Word.fromFile("CSA-final/res/possible words.csv");
@@ -16,22 +14,38 @@ public class Main {
 
         Wordle wordle = new Wordle();
 
-        System.out.println("Please enter the first word ADIEU is recomended");
+        //System.out.println("Please enter the second word; PINOT is recomended");
 
-        String word = scan.nextLine();
-        System.out.println(word);
-        System.out.println("Record the black, yellow and green with: BGR, ex: ADIEU might be responded to with: YYBYB");
+        while(true) {
+            System.out.println("Please enter the first word; TRACE is recomended");
 
-        String response1 = scan.nextLine();
-        System.out.println(response1);
+            String[] w1 = scan.nextLine().trim().toLowerCase(Locale.ROOT).split("");
 
-        String[] r1 = response1.split("");
+            System.out.println("Record the black, yellow and green with: BGR, ex: ADIEU might be responded to with: YYBYB");
 
-        if(r1.length != 5) throw new RuntimeException("YOU NEED 5 letters");
+            String[] r1 = scan.nextLine().trim().toLowerCase(Locale.ROOT).split("");
 
-        for(int i = 0; i < r1.length; i++) {
+            if(r1.length != 5) throw new RuntimeException("YOU NEED 5 letters");
 
+            int g = 0;
+
+            for(int i = 0; i < r1.length; i++) {
+                if(r1[i].equals("b")) {
+                    wordle.addExclude(w1[i].charAt(0));
+                } else if(r1[i].equals("y")) {
+                    wordle.add(w1[i].charAt(0));
+                } else {
+                    wordle.addIndex(i, w1[i].charAt(0));
+                    g++;
+                }
+            }
+            if(g == 5) return;
+
+            String guess = wordle.update();
+
+            System.out.println(guess);
         }
+
 
     }
     
