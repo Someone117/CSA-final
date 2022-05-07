@@ -1,54 +1,50 @@
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
-    
-    //Creating a scanner object to take in words from users
-    private static final Scanner scan = new Scanner(System.in);
-    
     public static void main(String[] args) {
-        try {
-            Word.fromFile("CSA-final/res/possible words.csv");
-        } catch (IOException e) { e.printStackTrace(); }
-
+        Scanner scan = new Scanner(System.in);
         Wordle wordle = new Wordle();
+        String[] times = {"first","second","third","fourth","fifth","sixth"};
+        String theWord = "trace";
 
-        //System.out.println("Please enter the second word; PINOT is recomended");
+        int count = 1;
 
-        while(true) {
-            System.out.println("Please enter the first word; TRACE is recomended");
+        while(!theWord.equals("") && count <= 6) {
+
+            System.out.println("Please enter the " + times[count-1] + " word; '" + theWord + "' is recommended, type exit if you are done");
 
             String[] w1 = scan.nextLine().trim().toLowerCase(Locale.ROOT).split("");
+
+            if(Arrays.equals(w1, new String[]{"e", "x", "i", "t"})) {
+                System.out.println("Great, '" + theWord + "' was the word!");
+                return;
+            }
 
             System.out.println("Record the black, yellow and green with: BGR, ex: ADIEU might be responded to with: YYBYB");
 
             String[] r1 = scan.nextLine().trim().toLowerCase(Locale.ROOT).split("");
 
-            if(r1.length != 5) throw new RuntimeException("YOU NEED 5 letters");
+            if (r1.length != 5) throw new RuntimeException("YOU NEED 5 letters");
 
-            int g = 0;
-
-            for(int i = 0; i < r1.length; i++) {
-                if(r1[i].equals("b")) {
-                    wordle.addExclude(w1[i].charAt(0));
-                } else if(r1[i].equals("y")) {
-                    wordle.add(w1[i].charAt(0));
+            for (int i = 0; i < 5; i++) {
+                if (r1[i].equals("b")) {
+                    wordle.addBlack(w1[i].charAt(0));
+                } else if (r1[i].equals("y")) {
+                    wordle.addYellow(i, w1[i].charAt(0));
                 } else {
-                    wordle.addIndex(i, w1[i].charAt(0));
-                    g++;
+                    wordle.addGreen(i, w1[i].charAt(0));
                 }
             }
-            if(g == 5) return;
 
-            String guess = wordle.update();
-
-            System.out.println(guess);
+            theWord = wordle.update();
+            count++;
+            if(wordle.getNumPossible() == 1) {
+                System.out.println("Great, '" + theWord + "' was the word!");
+                return;
+            }
+            if(count == 2) theWord = "pinot"; // trace and pinot give a ~ 59% chance to get it on the third try, often giving less than 10 words left for the third guess
         }
-
-
     }
-    
-    
-    
 }

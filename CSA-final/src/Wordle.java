@@ -2,62 +2,74 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Wordle {
-    private final ArrayList<Character> contents = new ArrayList<>();
-    private final char[] order = {'-','-','-','-','-'};
-    private final ArrayList<Character> exclude = new ArrayList<>();
 
-    // TODO: make it so that only letter is counted once when needed and also make it so yellow letters are not in there places
-
-
+    // the possible chars for a given index in the word
+    private final ArrayList<Character>[] possibleChars = new ArrayList[5];
+    // the possible words that could be the wordle
     private final ArrayList<Word> possible = new ArrayList<>();
 
+    /**
+     * Sets up a new Wordle object, initializing the possible characters and possible words
+     */
     public Wordle() {
+        for (int i = 0; i < possibleChars.length; i++) {
+            possibleChars[i] = new ArrayList<>();
+            char c;
+            for(c = 'a'; c <= 'z'; ++c) {
+                possibleChars[i].add(c);
+            }
+        }
         possible.addAll(Arrays.asList(Word.getAllWords()));
     }
 
-    public ArrayList<Character> getContents() {
-        return contents;
-    }
-    public void add(char c) {
-        contents.add(c);
+    /**
+     * Removes a character that appears as black in the wordle
+     * @param c the character that is black
+     */
+    public void addBlack(char c) {
+        for (ArrayList<Character> chars : possibleChars) {
+            if(chars.size() != 1)
+            chars.remove((Character) c);
+        }
     }
 
-    public void addIndex(int index, char c) {
-        order[index] = c;
+    /**
+     * Takes into account a green character in the wordle
+     * @param index the index of the word the character is in: ex "green" has the 'g' as the 0th character
+     * @param c the character that is green
+     */
+    public void addGreen(int index, char c) {
+        if(possibleChars[index].size() == 1) return;
+        possibleChars[index] = new ArrayList<>();
+        possibleChars[index].add(c);
+    }
+    /**
+     * Takes into account a yellow character in the wordle
+     * @param index the index of the word the character is in: ex "green" has the 'g' as the 0th character
+     * @param c the character that is yellow
+     */
+    public void addYellow(int index, char c) {
+        possibleChars[index].remove((Character) c);
     }
 
-    public void addExclude(char c) {
+    /**
+     * Updates the possible characters
+     * @return the next guess
+     */
+    public String update() {
         possible.removeIf(word -> {
             for(int i = 0; i < word.getChars().length; i++) {
-                if(word.getChars()[i] == c) return true;
+                if(!possibleChars[i].contains(word.getChars()[i])) return true;
             }
             return false;
         });
-    }
-
-    public char[] getOrder() {
-        return order;
-    }
-
-    public ArrayList<Character> getExclude() {
-        return exclude;
-    }
-
-    public String update() {
-        System.out.println(order);
-        possible.removeIf(word -> {
-            for(int i = 0; i < order.length; i++) {
-                if(order[i] != word.getChars()[i] && order[i] != '-') return true;
-            }
-            for (Character content : contents) {
-                if (word.notPartOf(String.valueOf(content))) return true;
-            }
-            return false;
-        });
-        if(possible.size() == 0) throw new IllegalArgumentException("UHH");
-        System.out.println(possible.size());
-        System.out.println(possible);
+        if(possible.size() > 0)
         return possible.get(0).getWord();
+        else return "";
     }
 
+    public int getNumPossible() {
+        return possible.size();
+    }
 }
+
