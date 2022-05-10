@@ -50,6 +50,22 @@ public class Wordle {
      */
     public void addYellow(int index, char c) {
         possibleChars[index].remove((Character) c);
+        for(int i = 0; i < possibleChars.length; i++) {
+            if(i != index) {
+                if(possibleChars[i].size() != 1) {
+                    boolean seen = false;
+                    for (Character ch : possibleChars[i]) {
+                        if (ch == c) {
+                            seen = true;
+                            break;
+                        }
+                    }
+                    if (!seen) {
+                        possibleChars[i].add(c);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -64,7 +80,7 @@ public class Wordle {
             return false;
         });
         if(possible.size() > 0)
-        return possible.get(0).getWord();
+        return Word.bestWord(possible);
         else return "";
     }
 

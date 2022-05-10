@@ -68,6 +68,34 @@ public class Word {
         return chars;
     }
 
+    public static String bestWord(ArrayList<Word> wordsList) {
+        String best = wordsList.get(0).getWord();
+        double bestRating = 0.0;
+        for(int i = 0; i < wordsList.size(); i++) {
+            double rating = 0;
+            for (Word value : wordsList) {
+                rating += similarity(wordsList.get(i), value);
+            }
+            rating/= wordsList.size();
+            if(bestRating < rating) {
+                bestRating = rating;
+                best = wordsList.get(i).getWord();
+            }
+        }
+        return best;
+    }
+
+    private static int similarity(Word w1, Word w2) {
+        int similar = 0;
+        for(int i = 0; i < w1.getChars().length; i++) {
+            for(int j = 0; j < w2.getChars().length; j++) {
+                if(w1.getChars()[i] == w2.getChars()[j]) similar++;
+            }
+        }
+
+        return similar;
+    }
+
     private static final String words = """
             aback
             abase
