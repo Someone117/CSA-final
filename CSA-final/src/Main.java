@@ -6,12 +6,24 @@ public class Main {
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
         Wordle wordle = new Wordle();
-        String[] times = {"first","second","third","fourth","fifth","sixth"};
+        String[] times = {"first","second","third","fourth","fifth","sixth","seventh","eight","ninth","tenth","eleventh","twelve","thirteenth","fourteenth","fifteenth","sixteenth","seventeenth","eighteenth","nineteenth","twentieth","twenty-first"};
         String theWord = "trace";
 
         int count = 1;
+        int end = 6;
 
-        while(!theWord.equals("") && count <= 6) {
+        System.out.println("How many wordles are you doing? (Use this program many times in tandem)");
+        int num = Integer.parseInt(scan.nextLine().toLowerCase().trim());
+        switch (num) {
+            case 16 -> end=21;
+            case 2 -> end=7;
+            case 8 -> end =13;
+            case 4 -> end=9;
+        }
+
+        System.out.println("OK, doing " + end + " guesses");
+
+        while(!theWord.equals("") && count <= end) {
 
             System.out.println("Please enter the " + times[count-1] + " word; '" + theWord + "' is recommended, type exit if you are done");
 
